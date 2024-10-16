@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MongoDB Atlas User List</title>
+  <script>
+    async function fetchUsers() {
+      const response = await fetch('http://localhost:5000/users');
+      const users = await response.json();
+      const userList = document.getElementById('user-list');
+      userList.innerHTML = '';
+      users.forEach(user => {
+        const li = document.createElement('li');
+        li.textContent = `${user.name} - ${user.email}`;
+        userList.appendChild(li);
+      });
+    }
+
+    async function addUser() {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+
+      const response = await fetch('http://localhost:5000/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, email })
+      });
+
+      const newUser = await response.json();
+      document.getElementById('user-list').innerHTML += `<li>${newUser.name} - ${newUser.email}</li>`;
+    }
+  </script>
+</head>
+<body onload="fetchUsers()">
+  <h1>User List</h1>
+  <ul id="user-list"></ul>
+
+  <h2>Add User</h2>
+  <input type="text" id="name" placeholder="Name" required>
+  <input type="email" id="email" placeholder="Email" required>
+  <button onclick="addUser()">Add User</button>
+</body>
+</html>
